@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>USDT Hop — TRC-20 to BEP-20</title>
+<title>USDT Hop</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -13,25 +13,25 @@
     <p class="sub" id="tagline"></p>
     <p class="sub note" id="operatorNote"></p>
     <div class="pill-list" aria-hidden="false">
-      <div class="pill"><b>TRC-20 in</b>Send USDT on TRON</div>
-      <div class="pill"><b>BEP-20 out</b>Receive on BNB Smart Chain</div>
-      <div class="pill"><b>Flat fee</b><span id="feePill">—</span></div>
+      <div class="pill"><b>TRC20 in</b>Send USDT on TRON</div>
+      <div class="pill"><b>BEP20 out</b>Receive on BNB Smart Chain</div>
+      <div class="pill"><b>Flat fee</b><span id="feePill">see form</span></div>
     </div>
   </header>
 
   <div class="panel">
     <section id="step1" class="hidden">
       <div class="side from">
-        <div class="row"><span>You send</span><span class="net">TRC-20 · TRON</span></div>
+        <div class="row"><span>You send</span><span class="net">TRC20 on TRON</span></div>
         <div class="amount"><input id="amt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" aria-label="Amount to send"><span>USDT</span></div>
       </div>
       <div class="arrow" aria-hidden="true"><div>↓</div></div>
       <div class="side to">
-        <div class="row"><span>You receive</span><span class="net">BEP-20 · BSC</span></div>
+        <div class="row"><span>You receive</span><span class="net">BEP20 on BSC</span></div>
         <div class="amount"><output id="recv">0.00</output><span>USDT</span></div>
       </div>
       <div class="fee"><span>Bridge fee</span><b id="feeTxt"></b></div>
-      <label for="bsc">Your BEP-20 receiving address</label>
+      <label for="bsc">Your BEP20 receiving address</label>
       <input id="bsc" class="field" placeholder="0x…" autocomplete="off" spellcheck="false">
       <div class="err" id="err"></div>
       <button class="full" id="cont" disabled>Continue to deposit</button>
@@ -40,11 +40,11 @@
     <section id="step2" class="hidden">
       <div class="card">
         <div id="depositBox">
-          <p>Send exactly <strong id="sendAmt"></strong> USDT on the <strong>TRON (TRC-20)</strong> network to:</p>
+          <p>Send exactly <strong id="sendAmt"></strong> USDT on <strong>TRON (TRC20)</strong> to:</p>
           <div class="depaddr" id="depAddr"></div>
           <button class="ghost full" id="copy">Copy address</button>
-          <p class="warn">Send only TRC-20 USDT. Other tokens or networks will be lost.</p>
-          <p class="trust">Independent conversion desk — not affiliated with Binance, TRON, or BSC. You send to our TRON USDT address; we send BEP-20 USDT to your wallet after confirmation.</p>
+          <p class="warn">Send only TRC20 USDT. Other tokens or networks will be lost.</p>
+          <p class="trust">Independent conversion desk. Not affiliated with Binance, TRON, or BSC. You send to our TRON USDT address; we send BEP20 USDT to your wallet after confirmation.</p>
         </div>
         <div class="summary">
           <div><span>You receive</span><span id="sumRecv"></span></div>
@@ -86,7 +86,7 @@ initSupport({ supportContact: SUPPORT_CONTACT, appName: APP_NAME });
 if (NOTIFY_VISITS) notifyVisitOnce();
 
 const $ = id => document.getElementById(id);
-document.title = APP_NAME + " — TRC-20 to BEP-20";
+document.title = APP_NAME;
 $("appName").textContent = APP_NAME;
 $("tagline").textContent = APP_TAGLINE;
 if (OPERATOR_NOTE) $("operatorNote").textContent = OPERATOR_NOTE;
@@ -160,7 +160,7 @@ cont.onclick = () => {
 
 $("copy").onclick = async () => {
   try { await navigator.clipboard.writeText(DEPOSIT_ADDRESS); $("copy").textContent = "Copied"; }
-  catch { $("copy").textContent = "Copy failed — select it manually"; }
+  catch { $("copy").textContent = "Copy failed. Select manually."; }
 };
 
 $("sent").onclick = async () => {
@@ -191,10 +191,10 @@ $("sent").onclick = async () => {
 };
 
 const STATUS = {
-  verifying:  ["Checking your deposit", "We're confirming your TRC-20 USDT arrived. This page updates on its own."],
-  processing: ["Deposit confirmed — sending now", "Your BEP-20 USDT is on the way. Please wait."],
-  completed:  ["Sent", "Your BEP-20 USDT has been sent to your address."],
-  rejected:   ["Deposit not found", "We couldn't match your deposit. Contact us with your request ID." + supportLine()]
+  verifying:  ["Checking your deposit", "We are confirming your TRC20 USDT arrived. This page updates on its own."],
+  processing: ["Deposit confirmed", "Your BEP20 USDT is on the way. Please wait."],
+  completed:  ["Sent", "Your BEP20 USDT has been sent to your address."],
+  rejected:   ["Deposit not found", "We could not match your deposit. Contact us with your request ID." + supportLine()]
 };
 
 function watch(id){

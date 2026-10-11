@@ -19,7 +19,7 @@ export function initSupport({ supportContact, appName }) {
   const closeBtn = document.getElementById("supportClose");
   if (!root || !toggle || !panel) return;
 
-  const defaultMsg = `Hi ${appName} support — I need help with my bridge request.`;
+  const defaultMsg = `Hi ${appName} support. I need help with my bridge request.`;
   textarea.value = defaultMsg;
 
   const wa = supportContact ? whatsappUrl(supportContact, defaultMsg) : null;

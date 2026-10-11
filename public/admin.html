@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin — USDT Hop</title>
+<title>USDT Hop Admin</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  body{padding:0;display:block;background-color:var(--cream-200)}
+  body{padding:0;display:block;background:var(--ash-bg);color:var(--cream-on-ash)}
   main.wide{margin:0 auto;padding:28px 18px 88px}
+  main.wide h1{color:var(--cream-bright)}
+  main.wide .sub{color:var(--cream-on-ash)}
   .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
   .live{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--ok);font-weight:600}
   .live i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
@@ -18,7 +20,7 @@
   .stat b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}
   .stat span{font-size:.8rem;color:var(--muted)}
   .stat.hot{border-color:var(--bsc);background:var(--bsc-soft)}
-  .bar{position:sticky;top:0;background:rgba(247,242,232,.92);backdrop-filter:blur(8px);padding:8px 0 12px;z-index:5}
+  .bar{position:sticky;top:0;background:var(--ash-bg);padding:8px 0 12px;z-index:5;border-bottom:1px solid rgba(237,227,209,.2)}
   .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}
   .tabs button{flex:none;padding:9px 14px;font-size:.9rem;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
   .tabs button[aria-pressed="true"]{background:var(--ash-800);color:var(--cream-50);border-color:var(--ash-800)}
@@ -75,7 +77,7 @@
 
   <section id="dash" class="hidden">
     <div class="top">
-      <div><h1 id="dashTitle">Admin</h1><span class="live"><i></i>Live — updates on its own</span></div>
+      <div><h1 id="dashTitle">Admin</h1><span class="live"><i></i>Live updates</span></div>
       <button class="ghost" id="signout">Sign out</button>
     </div>
     <div class="stats">
@@ -165,7 +167,7 @@ function render(){
 
   $("list").querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
     try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copied ✓"; setTimeout(() => b.textContent = "Copy", 1500); }
-    catch { toast("Couldn't copy — select the address manually"); }
+    catch { toast("Could not copy. Select the address manually."); }
   });
   $("list").querySelectorAll("[data-tx]").forEach(i => i.oninput = () => txDrafts[i.dataset.tx] = i.value);
   $("list").querySelectorAll("[data-act]").forEach(b => b.onclick = () => act(b.dataset.id, b.dataset.act));
@@ -177,21 +179,21 @@ function card(r){
       <div>Customer sent<b>${r.send.toFixed(2)}</b></div>
       <div>Your fee<b>${(r.send - r.receive).toFixed(2)}</b></div>
       <div>Customer gets<b>${r.receive.toFixed(2)}</b></div></div>`;
-  const addr = `<div class="addr"><small>Customer's BEP-20 address</small>
+  const addr = `<div class="addr"><small>Customer BEP20 address</small>
       <div><code>${r.bscAddress}</code><button data-copy="${r.bscAddress}">Copy</button></div></div>`;
 
   if (r.status === "verifying") return `<div class="req ${fresh.has(r.id) ? "fresh" : ""}">${top}
       <p class="task">Check Binance for <span class="amt">${r.send.toFixed(2)}</span> USDT</p>
-      <p class="hint">Look for a TRC-20 deposit of this exact amount. The customer is waiting on "Checking your deposit".</p>
+      <p class="hint">Look for a TRC20 deposit of this exact amount. The customer is waiting on Checking your deposit.</p>
       ${money}${addr}
       <div class="actions"><button class="no" data-id="${r.id}" data-act="reject">Not received</button>
         <button data-id="${r.id}" data-act="verify">Yes, I received it</button></div></div>`;
 
   if (r.status === "processing") return `<div class="req">${top}
-      <p class="task">Send <span class="amt">${r.receive.toFixed(2)}</span> USDT on BEP-20</p>
+      <p class="task">Send <span class="amt">${r.receive.toFixed(2)}</span> USDT on BEP20</p>
       <p class="hint">Deposit verified. The customer now sees "sending now". Copy the address, send from Binance, then mark it sent.</p>
       ${addr}
-      <div class="tx"><label for="tx-${r.id}">Transaction hash (optional — shows the customer a BscScan link)</label>
+      <div class="tx"><label for="tx-${r.id}">Transaction hash (optional, shows BscScan link to customer)</label>
         <input id="tx-${r.id}" data-tx="${r.id}" class="field" placeholder="0x…" value="${txDrafts[r.id] || ""}" autocomplete="off"></div>
       <div class="actions"><button data-id="${r.id}" data-act="sent">I have sent ${r.receive.toFixed(2)} USDT</button></div></div>`;
 
