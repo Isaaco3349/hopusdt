@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin — USDT Hop</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  body{padding:0;display:block}
+  main.wide{margin:0 auto;padding:24px 16px 80px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+  .live{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--ok);font-weight:600}
+  .live i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+  .top button{padding:8px 14px;font-size:.85rem}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}
+  .stat span{font-size:.8rem;color:var(--muted)}
+  .stat.hot{border-color:var(--bsc);background:#FFF8E6}
+  .bar{position:sticky;top:0;background:var(--paper);padding:8px 0 12px;z-index:5}
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}
+  .tabs button{flex:none;padding:9px 14px;font-size:.9rem;background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .tabs button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .badge{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:10px;font-size:.75rem;background:var(--paper);color:var(--ink)}
+  .tabs button[aria-pressed="true"] .badge{background:rgba(255,255,255,.2);color:#fff}
+  .badge.alert{background:var(--bsc);color:var(--ink)}
+  .req{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:12px}
+  .req.fresh{border-color:var(--bsc);box-shadow:0 0 0 3px #FFE9A8}
+  .req .meta{font-size:.8rem;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .task{font-size:1.05rem;margin:10px 0 4px;line-height:1.4}
+  .task .amt{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .hint{font-size:.85rem;color:var(--muted);margin-bottom:12px;line-height:1.5}
+  .money{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0;font-size:.8rem;color:var(--muted)}
+  .money div{background:var(--paper);border-radius:8px;padding:8px 10px}
+  .money b{display:block;color:var(--ink);font-size:.95rem}
+  .addr{background:var(--paper);border-radius:10px;padding:12px;margin:8px 0 12px}
+  .addr small{display:block;font-size:.75rem;color:var(--muted);margin-bottom:4px}
+  .addr div{display:flex;gap:10px;align-items:center}
+  .addr code{flex:1;font-family:inherit;font-weight:600;font-size:.9rem;word-break:break-all;letter-spacing:.02em}
+  .addr button{flex:none;padding:8px 12px;font-size:.8rem}
+  .tx{margin-bottom:12px}
+  .tx input{margin-top:4px}
+  .actions{display:flex;gap:8px}
+  .actions button{flex:1;padding:14px}
+  .actions .no{flex:none;background:transparent;color:var(--tron);border:1px solid var(--line)}
+  .done{font-size:.85rem;color:var(--muted)}
+  .done a{font-weight:600}
+  .empty{text-align:center;padding:48px 16px;color:var(--muted)}
+  .empty b{display:block;color:var(--ink);font-size:1.1rem;margin-bottom:4px}
+  .modal{position:fixed;inset:0;background:rgba(28,43,39,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+  .sheet{background:#fff;width:100%;max-width:440px;border-radius:18px 18px 0 0;padding:22px}
+  @media(min-width:600px){.modal{align-items:center}.sheet{border-radius:18px}}
+  .sheet h2{font-size:1.15rem;margin-bottom:8px}
+  .sheet p{font-size:.9rem;color:var(--muted);line-height:1.55;margin-bottom:16px}
+  .sheet .actions .cancel{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;
+    padding:12px 14px;display:flex;gap:14px;align-items:center;font-size:.9rem;z-index:30;width:calc(100% - 32px);max-width:440px}
+  .toast span{flex:1}
+  .toast button{padding:6px 12px;font-size:.85rem;background:#fff;color:var(--ink)}
+  #login{max-width:360px;margin:40px auto 0}
+  @media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:span 2}.money{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main class="wide">
+  <section id="login" class="hidden">
+    <h1 id="loginTitle">Admin</h1>
+    <p class="sub">Sign in to review deposits.</p>
+    <label for="email">Email</label><input id="email" class="field" type="email" autocomplete="username">
+    <label for="pw">Password</label><input id="pw" class="field" type="password" autocomplete="current-password">
+    <div class="err" id="loginErr"></div>
+    <button class="full" id="signin">Sign in</button>
+  </section>
+
+  <section id="dash" class="hidden">
+    <div class="top">
+      <div><h1 id="dashTitle">Admin</h1><span class="live"><i></i>Live — updates on its own</span></div>
+      <button class="ghost" id="signout">Sign out</button>
+    </div>
+    <div class="stats">
+      <div class="stat" id="stWait"><b>0</b><span>Need your action</span></div>
+      <div class="stat"><b id="stSend">0.00</b><span>USDT to send now</span></div>
+      <div class="stat"><b id="stFees">0.00</b><span>Fees earned today</span></div>
+    </div>
+    <div class="bar">
+      <div class="tabs" id="tabs"></div>
+      <input id="search" class="field" type="search" placeholder="Search by amount, address or request ID">
+    </div>
+    <div id="list"></div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="sheet"><h2 id="mTitle"></h2><p id="mText"></p>
+    <div class="actions"><button class="cancel" id="mNo">Cancel</button><button id="mYes"></button></div></div>
+</div>
+<div id="toast" class="toast hidden" role="status"><span id="tText"></span><button id="tUndo">Undo</button></div>
+
+<script type="module">
+import { db, auth, FEE, APP_NAME } from "./firebase-config.js";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { collection, query, orderBy, onSnapshot, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const $ = id => document.getElementById(id);
+const adminLabel = APP_NAME + " admin";
+$("loginTitle").textContent = adminLabel;
+$("dashTitle").textContent = adminLabel;
+const TABS = [["verifying","Check deposit"],["processing","Send USDT"],["completed","Done"],["rejected","Not received"]];
+let current = "verifying", rows = [], unsub = null, firstLoad = true, seen = new Set(), fresh = new Set();
+const txDrafts = {};
+
+$("signin").onclick = async () => {
+  $("loginErr").textContent = "";
+  try { await signInWithEmailAndPassword(auth, $("email").value, $("pw").value); }
+  catch { $("loginErr").textContent = "Wrong email or password."; }
+};
+$("pw").onkeydown = e => { if (e.key === "Enter") $("signin").click(); };
+$("signout").onclick = () => signOut(auth);
+
+onAuthStateChanged(auth, user => {
+  $("login").classList.toggle("hidden", !!user);
+  $("dash").classList.toggle("hidden", !user);
+  if (unsub) { unsub(); unsub = null; }
+  if (!user) return;
+  unsub = onSnapshot(query(collection(db, "bridges"), orderBy("createdAt", "desc")), snap => {
+    rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    rows.forEach(r => {
+      if (!seen.has(r.id) && !firstLoad && r.status === "verifying") {
+        fresh.add(r.id); beep();
+        toast(`New request: ${r.send.toFixed(2)} USDT`);
+      }
+      seen.add(r.id);
+    });
+    firstLoad = false;
+    render();
+  }, () => { $("list").innerHTML = `<div class="empty"><b>No access</b>This account isn't the admin email in your Firestore rules.</div>`; });
+});
+
+$("search").oninput = () => render();
+
+function render(){
+  const by = s => rows.filter(r => r.status === s);
+  const wait = by("verifying").length + by("processing").length;
+  $("stWait").querySelector("b").textContent = wait;
+  $("stWait").classList.toggle("hot", wait > 0);
+  $("stSend").textContent = sum(by("processing"), "receive").toFixed(2);
+  const today = new Date().toDateString();
+  $("stFees").textContent = (by("completed").filter(r => r.sentAt?.toDate?.().toDateString() === today).length * FEE).toFixed(2);
+  document.title = wait ? `(${wait}) ${adminLabel}` : adminLabel;
+
+  $("tabs").innerHTML = TABS.map(([k, label]) => {
+    const n = by(k).length, urgent = n && (k === "verifying" || k === "processing");
+    return `<button data-tab="${k}" aria-pressed="${k === current}">${label}<span class="badge ${urgent ? "alert" : ""}">${n}</span></button>`;
+  }).join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { current = b.dataset.tab; render(); });
+
+  const q = $("search").value.trim().toLowerCase();
+  const list = by(current).filter(r => !q || [r.id, r.bscAddress, r.send.toFixed(2), r.receive.toFixed(2)].some(v => v.toLowerCase().includes(q)));
+
+  if (!list.length) { $("list").innerHTML = emptyState(q); return; }
+  const focused = document.activeElement?.dataset?.tx;
+  $("list").innerHTML = list.map(card).join("");
+  if (focused) { const el = $("tx-" + focused); if (el) { el.focus(); el.selectionStart = el.value.length; } }
+
+  $("list").querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = "Copied ✓"; setTimeout(() => b.textContent = "Copy", 1500); }
+    catch { toast("Couldn't copy — select the address manually"); }
+  });
+  $("list").querySelectorAll("[data-tx]").forEach(i => i.oninput = () => txDrafts[i.dataset.tx] = i.value);
+  $("list").querySelectorAll("[data-act]").forEach(b => b.onclick = () => act(b.dataset.id, b.dataset.act));
+}
+
+function card(r){
+  const top = `<div class="meta"><span>${ago(r.createdAt)}</span><span>ID ${r.id}</span></div>`;
+  const money = `<div class="money">
+      <div>Customer sent<b>${r.send.toFixed(2)}</b></div>
+      <div>Your fee<b>${(r.send - r.receive).toFixed(2)}</b></div>
+      <div>Customer gets<b>${r.receive.toFixed(2)}</b></div></div>`;
+  const addr = `<div class="addr"><small>Customer's BEP-20 address</small>
+      <div><code>${r.bscAddress}</code><button data-copy="${r.bscAddress}">Copy</button></div></div>`;
+
+  if (r.status === "verifying") return `<div class="req ${fresh.has(r.id) ? "fresh" : ""}">${top}
+      <p class="task">Check Binance for <span class="amt">${r.send.toFixed(2)}</span> USDT</p>
+      <p class="hint">Look for a TRC-20 deposit of this exact amount. The customer is waiting on "Checking your deposit".</p>
+      ${money}${addr}
+      <div class="actions"><button class="no" data-id="${r.id}" data-act="reject">Not received</button>
+        <button data-id="${r.id}" data-act="verify">Yes, I received it</button></div></div>`;
+
+  if (r.status === "processing") return `<div class="req">${top}
+      <p class="task">Send <span class="amt">${r.receive.toFixed(2)}</span> USDT on BEP-20</p>
+      <p class="hint">Deposit verified. The customer now sees "sending now". Copy the address, send from Binance, then mark it sent.</p>
+      ${addr}
+      <div class="tx"><label for="tx-${r.id}">Transaction hash (optional — shows the customer a BscScan link)</label>
+        <input id="tx-${r.id}" data-tx="${r.id}" class="field" placeholder="0x…" value="${txDrafts[r.id] || ""}" autocomplete="off"></div>
+      <div class="actions"><button data-id="${r.id}" data-act="sent">I have sent ${r.receive.toFixed(2)} USDT</button></div></div>`;
+
+  return `<div class="req">${top}
+      ${money}${addr}
+      <p class="done">${r.status === "completed"
+        ? `Sent ${ago(r.sentAt)}${r.txHash ? ` · <a href="https://bscscan.com/tx/${encodeURIComponent(r.txHash)}" target="_blank" rel="noopener">View on BscScan</a>` : ""}`
+        : `Marked not received ${ago(r.rejectedAt)}`}</p></div>`;
+}
+
+function emptyState(q){
+  if (q) return `<div class="empty"><b>No matches</b>Try a different amount, address or ID.</div>`;
+  return {
+    verifying:  `<div class="empty"><b>All caught up</b>New deposit requests will appear here automatically.</div>`,
+    processing: `<div class="empty"><b>Nothing to send</b>Verified deposits will wait here for you to send.</div>`,
+    completed:  `<div class="empty"><b>No completed bridges yet</b></div>`,
+    rejected:   `<div class="empty"><b>No rejected requests</b></div>`
+  }[current];
+}
+
+async function act(id, a){
+  const r = rows.find(x => x.id === id);
+  fresh.delete(id);
+  const cfg = {
+    verify: { title: "Deposit received?", text: `You found ${r.send.toFixed(2)} USDT on Binance. The customer will see "sending now".`,
+              yes: "Yes, received", patch: { status: "processing", verifiedAt: serverTimestamp() }, msg: "Moved to Send USDT" },
+    sent:   { title: `Sent ${r.receive.toFixed(2)} USDT?`, text: `To ${r.bscAddress}. The customer will see "Sent".`,
+              yes: "Yes, I sent it", patch: { status: "completed", txHash: (txDrafts[id] || "").trim() || null, sentAt: serverTimestamp() }, msg: "Marked as sent" },
+    reject: { title: "Mark as not received?", text: "The customer will be told to contact you with their request ID.",
+              yes: "Mark not received", patch: { status: "rejected", rejectedAt: serverTimestamp() }, msg: "Marked not received" }
+  }[a];
+
+  if (!await confirmBox(cfg.title, cfg.text, cfg.yes)) return;
+  const before = r.status;
+  try {
+    await updateDoc(doc(db, "bridges", id), cfg.patch);
+    delete txDrafts[id];
+    toast(cfg.msg, () => updateDoc(doc(db, "bridges", id), { status: before }));
+  } catch { toast("Couldn't save. Check your connection and try again."); }
+}
+
+function confirmBox(title, text, yes){
+  return new Promise(res => {
+    $("mTitle").textContent = title; $("mText").textContent = text; $("mYes").textContent = yes;
+    $("modal").classList.remove("hidden"); $("mYes").focus();
+    const close = v => { $("modal").classList.add("hidden"); res(v); };
+    $("mYes").onclick = () => close(true);
+    $("mNo").onclick = () => close(false);
+    $("modal").onclick = e => { if (e.target === $("modal")) close(false); };
+    document.onkeydown = e => { if (e.key === "Escape") close(false); };
+  });
+}
+
+let tTimer;
+function toast(msg, undo){
+  $("tText").textContent = msg;
+  $("tUndo").classList.toggle("hidden", !undo);
+  $("tUndo").onclick = async () => { $("toast").classList.add("hidden"); await undo(); };
+  $("toast").classList.remove("hidden");
+  clearTimeout(tTimer); tTimer = setTimeout(() => $("toast").classList.add("hidden"), 6000);
+}
+
+function sum(list, k){ return list.reduce((t, r) => t + (r[k] || 0), 0); }
+function ago(ts){
+  const d = ts?.toDate?.(); if (!d) return "just now";
+  const s = (Date.now() - d) / 1000;
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s / 60) + " min ago";
+  if (s < 86400) return Math.floor(s / 3600) + " hr ago";
+  return d.toLocaleDateString();
+}
+function beep(){
+  try { const c = new AudioContext(), o = c.createOscillator(), g = c.createGain();
+    o.frequency.value = 880; g.gain.value = .08; o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + .15); } catch {}
+}
+setInterval(render, 60000);
+</script>
+</body>
+</html>

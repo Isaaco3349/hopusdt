@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USDT Hop — TRC-20 to BEP-20</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1 id="appName">USDT Hop</h1>
+  <p class="sub" id="tagline"></p>
+  <p class="sub note" id="operatorNote"></p>
+
+  <section id="step1" class="hidden">
+    <div class="side from">
+      <div class="row"><span>You send</span><span class="net">TRC-20 · TRON</span></div>
+      <div class="amount"><input id="amt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="0.00" aria-label="Amount to send"><span>USDT</span></div>
+    </div>
+    <div class="arrow" aria-hidden="true"><div>↓</div></div>
+    <div class="side to">
+      <div class="row"><span>You receive</span><span class="net">BEP-20 · BSC</span></div>
+      <div class="amount"><output id="recv">0.00</output><span>USDT</span></div>
+    </div>
+    <div class="fee"><span>Bridge fee</span><b id="feeTxt"></b></div>
+    <label for="bsc">Your BEP-20 receiving address</label>
+    <input id="bsc" class="field" placeholder="0x…" autocomplete="off" spellcheck="false">
+    <div class="err" id="err"></div>
+    <button class="full" id="cont" disabled>Continue to deposit</button>
+  </section>
+
+  <section id="step2" class="hidden">
+    <div class="card">
+      <div id="depositBox">
+        <p>Send exactly <strong id="sendAmt"></strong> USDT on the <strong>TRON (TRC-20)</strong> network to:</p>
+        <div class="depaddr" id="depAddr"></div>
+        <button class="ghost full" id="copy">Copy address</button>
+        <p class="warn">Send only TRC-20 USDT. Other tokens or networks will be lost.</p>
+        <p class="trust">Independent conversion desk — not affiliated with Binance, TRON, or BSC. You send to our TRON USDT address; we send BEP-20 USDT to your wallet after confirmation.</p>
+      </div>
+      <div class="summary">
+        <div><span>You receive</span><span id="sumRecv"></span></div>
+        <div><span>To (BSC)</span><span id="sumAddr"></span></div>
+        <div><span>Request ID</span><span id="sumId">—</span></div>
+      </div>
+      <button class="full" id="sent">I've sent the USDT</button>
+      <div class="status hidden" id="status"><div class="dot"></div><div><b id="stTitle"></b><small id="stText"></small></div></div>
+      <p id="saveNote" class="hidden" style="margin-top:12px;font-size:.8rem">Bookmark this page to check your status later.</p>
+    </div>
+    <button class="ghost full" id="back" style="margin-top:12px">Start a new bridge</button>
+  </section>
+</main>
+
+<div id="supportRoot" class="support-root">
+  <button type="button" id="supportToggle" class="support-fab" aria-expanded="false" aria-controls="supportPanel">Help</button>
+  <div id="supportPanel" class="support-panel hidden" role="dialog" aria-labelledby="supportTitle">
+    <h2 id="supportTitle">Message support</h2>
+    <p>We reply manually on WhatsApp. Include your request ID if you already submitted a bridge.</p>
+    <textarea id="supportMsg" class="field" aria-label="Your message"></textarea>
+    <div class="row">
+      <button type="button" id="supportSend">Open WhatsApp</button>
+      <button type="button" id="supportClose" class="ghost">Close</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {
+  db, FEE, MIN_AMOUNT, DEPOSIT_ADDRESS,
+  APP_NAME, APP_TAGLINE, OPERATOR_NOTE, SUPPORT_CONTACT
+} from "./firebase-config.js";
+import { initSupport, notifyVisitOnce, notifyDesk } from "./support.js";
+import { collection, addDoc, doc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+initSupport({ supportContact: SUPPORT_CONTACT, appName: APP_NAME });
+notifyVisitOnce();
+
+const $ = id => document.getElementById(id);
+document.title = APP_NAME + " — TRC-20 to BEP-20";
+$("appName").textContent = APP_NAME;
+$("tagline").textContent = APP_TAGLINE;
+if (OPERATOR_NOTE) $("operatorNote").textContent = OPERATOR_NOTE;
+const amt = $("amt"), bsc = $("bsc"), cont = $("cont");
+$("feeTxt").textContent = FEE.toFixed(2) + " USDT";
+$("depAddr").textContent = DEPOSIT_ADDRESS;
+const isBsc = a => /^0x[a-fA-F0-9]{40}$/.test(a.trim());
+
+function supportLine() {
+  if (!SUPPORT_CONTACT) return "";
+  const c = SUPPORT_CONTACT.trim();
+  if (c.startsWith("http")) return `<br><a href="${encodeURI(c)}" target="_blank" rel="noopener">Contact support</a>`;
+  if (c.startsWith("whatsapp:")) return `<br><a href="https://wa.me/${c.replace(/^whatsapp:/i, "").replace(/\D/g, "")}" target="_blank" rel="noopener">Contact support on WhatsApp</a>`;
+  return `<br>Support: ${c}`;
+}
+
+function update(){
+  const v = Math.round(parseFloat(amt.value) * 100) / 100;
+  $("recv").textContent = (v > FEE ? v - FEE : 0).toFixed(2);
+  let msg = "";
+  if (amt.value && !(v >= MIN_AMOUNT)) msg = `Minimum is ${MIN_AMOUNT} USDT.`;
+  else if (bsc.value && !isBsc(bsc.value)) msg = "Enter a valid BSC address (0x followed by 40 characters).";
+  $("err").textContent = msg;
+  cont.disabled = !(v >= MIN_AMOUNT && isBsc(bsc.value));
+}
+amt.oninput = update; bsc.oninput = update;
+
+let draft = null;
+cont.onclick = () => {
+  const send = Math.round(parseFloat(amt.value) * 100) / 100;
+  draft = { send, receive: Math.round((send - FEE) * 100) / 100, bscAddress: bsc.value.trim() };
+  $("sendAmt").textContent = send.toFixed(2);
+  $("sumRecv").textContent = draft.receive.toFixed(2) + " USDT";
+  $("sumAddr").textContent = draft.bscAddress;
+  show(2);
+};
+
+$("copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(DEPOSIT_ADDRESS); $("copy").textContent = "Copied"; }
+  catch { $("copy").textContent = "Copy failed — select it manually"; }
+};
+
+$("sent").onclick = async () => {
+  $("sent").disabled = true; $("sent").textContent = "Submitting…";
+  try {
+    const ref = await addDoc(collection(db, "bridges"), { ...draft, status: "verifying", createdAt: serverTimestamp() });
+    history.replaceState(null, "", "?id=" + ref.id);
+    notifyDesk({ type: "order", id: ref.id, send: draft.send, receive: draft.receive, bscAddress: draft.bscAddress });
+    watch(ref.id);
+  } catch {
+    $("sent").disabled = false; $("sent").textContent = "I've sent the USDT";
+    alert("Couldn't submit your request. Check your connection and try again.");
+  }
+};
+
+const STATUS = {
+  verifying:  ["Checking your deposit", "We're confirming your TRC-20 USDT arrived. This page updates on its own."],
+  processing: ["Deposit confirmed — sending now", "Your BEP-20 USDT is on the way. Please wait."],
+  completed:  ["Sent", "Your BEP-20 USDT has been sent to your address."],
+  rejected:   ["Deposit not found", "We couldn't match your deposit. Contact us with your request ID." + supportLine()]
+};
+
+function watch(id){
+  $("sumId").textContent = id;
+  $("sent").classList.add("hidden");
+  $("saveNote").classList.remove("hidden");
+  onSnapshot(doc(db, "bridges", id), snap => {
+    if (!snap.exists()) { $("stTitle").textContent = "Request not found"; $("status").classList.remove("hidden"); return; }
+    const d = snap.data();
+    $("sendAmt").textContent = d.send.toFixed(2);
+    $("sumRecv").textContent = d.receive.toFixed(2) + " USDT";
+    $("sumAddr").textContent = d.bscAddress;
+    $("depositBox").classList.toggle("hidden", d.status !== "verifying");
+    const [t, txt] = STATUS[d.status] || ["", ""];
+    $("status").className = "status st-" + d.status;
+    $("stTitle").textContent = t;
+    $("stText").innerHTML = txt + (d.txHash ? `<br><a href="https://bscscan.com/tx/${encodeURIComponent(d.txHash)}" target="_blank" rel="noopener">View on BscScan</a>` : "");
+  });
+}
+
+function show(n){ $("step1").classList.toggle("hidden", n !== 1); $("step2").classList.toggle("hidden", n !== 2); }
+$("back").onclick = () => { location.href = location.pathname; };
+
+const existing = new URLSearchParams(location.search).get("id");
+if (existing) { show(2); watch(existing); } else show(1);
+</script>
+</body>
+</html>

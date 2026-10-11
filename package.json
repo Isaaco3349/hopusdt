@@ -1,0 +1,14 @@
+{
+  "name": "usdthop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Manual TRC-20 → BEP-20 USDT bridge desk (Firebase + Vercel)",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "firebase:rules": "node scripts/build.mjs --rules-only",
+    "firebase:deploy-rules": "npm run firebase:rules && firebase deploy --only firestore:rules,firestore:indexes"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
