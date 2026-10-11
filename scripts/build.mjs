@@ -5,6 +5,16 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 
+const envPath = path.join(root, ".env");
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf8").split(/\r?\n/)) {
+    const m = line.match(/^\s*([^#][^=]*?)\s*=\s*(.*)$/);
+    if (m && process.env[m[1].trim()] === undefined) {
+      process.env[m[1].trim()] = m[2].trim();
+    }
+  }
+}
+
 const rulesOnly = process.argv.includes("--rules-only");
 
 function req(name) {
@@ -49,6 +59,7 @@ export const OPERATOR_NOTE = ${JSON.stringify(
   process.env.BRIDGE_OPERATOR_NOTE?.trim() || "Operated by a verified desk partner."
 )};
 export const SUPPORT_CONTACT = ${JSON.stringify(process.env.BRIDGE_SUPPORT_CONTACT?.trim() || "")};
+export const NOTIFY_VISITS = ${JSON.stringify(process.env.BRIDGE_NOTIFY_VISITS === "true")};
 
 export const FEE = ${FEE};
 export const MIN_AMOUNT = ${MIN_AMOUNT};
@@ -70,7 +81,8 @@ service cloud.firestore {
                     && request.resource.data.send >= ${MIN_AMOUNT}
                     && request.resource.data.receive == request.resource.data.send - ${FEE}
                     && request.resource.data.bscAddress.matches('^0x[a-fA-F0-9]{40}$')
-                    && request.resource.data.createdAt == request.time;
+                    && request.resource.data.createdAt is timestamp
+                    && request.resource.data.createdAt <= request.time;
       allow get: if true;
       allow list, update, delete: if isAdmin();
     }

@@ -43,8 +43,10 @@ You do **not** need a new bot name. Use the bot you already created:
 
 **Safety:** The token lives only on Vercel for `/api/notify`. Reusing an old bot is safe for this project if the token stays server-side. Avoid reusing a bot that controls other production systems unless you are OK sharing alert traffic.
 
-- **Visitor:** one ping per browser session when someone opens the site.
 - **Order:** ping when a customer submits “I've sent the USDT”.
+- **Visitor:** optional — set `BRIDGE_NOTIFY_VISITS=true` on Vercel (default off).
+
+If submit hangs or fails, redeploy Firestore rules (`npm run firebase:deploy-rules`) and ensure Google Cloud **API key** allows your Vercel domain (HTTP referrers).
 - Local `npx serve public` has no `/api/notify` — use Vercel preview/production to test alerts.
 
 ## Firebase (one-time)
