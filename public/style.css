@@ -47,8 +47,14 @@ a:hover{color:var(--accent-hover);text-decoration:underline}
   padding:14px 20px;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
-.logo{font-size:1.15rem;font-weight:700;color:var(--on-dark);letter-spacing:-.02em}
+.logo{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:1.15rem;font-weight:700;color:var(--on-dark);letter-spacing:-.02em;
+  text-decoration:none!important;
+}
+.logo:hover{text-decoration:none!important}
 .logo span{color:var(--accent)}
+.logo-mark{display:block;flex:none;border-radius:8px}
 .site-nav{display:flex;align-items:center;gap:20px;font-size:.88rem}
 .site-nav a{color:var(--on-dark-muted);font-weight:600}
 .site-nav a:hover{color:var(--on-dark)}

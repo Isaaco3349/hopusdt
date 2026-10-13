@@ -4,13 +4,24 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>USDT Hop</title>
 <meta name="description" content="Convert USDT from TRON TRC20 to BNB Smart Chain BEP20 with a clear flat fee and live order status.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="USDT Hop">
+<meta property="og:description" content="Send USDT on TRON, receive USDT on BNB Smart Chain. Transparent flat fee.">
+<meta property="og:image" content="https://hopusdt.vercel.app/brand/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hopusdt.vercel.app/brand/og-image.jpg">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/brand/apple-touch-icon.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="site-header">
   <div class="header-inner">
-    <a class="logo" href="/" id="logoText">USDT <span>Hop</span></a>
+    <a class="logo" href="/">
+      <img class="logo-mark" src="/brand/logo-mark.svg" width="32" height="32" alt="">
+      <span id="logoText">USDT <span>Hop</span></span>
+    </a>
     <nav class="site-nav" aria-label="Main">
       <a href="#how">How it works</a>
       <a href="#faq">FAQ</a>
@@ -154,10 +165,11 @@ initSupport({ supportContact: SUPPORT_CONTACT, appName: APP_NAME });
 const $ = id => document.getElementById(id);
 document.title = APP_NAME;
 const nameParts = APP_NAME.trim().split(/\s+/);
+const logoEl = $("logoText");
 if (nameParts.length > 1) {
-  $("logoText").innerHTML = `${nameParts[0]} <span>${nameParts.slice(1).join(" ")}</span>`;
+  logoEl.innerHTML = `${nameParts[0]} <span>${nameParts.slice(1).join(" ")}</span>`;
 } else {
-  $("logoText").textContent = APP_NAME;
+  logoEl.textContent = APP_NAME;
 }
 function cleanTagline(text) {
   return text

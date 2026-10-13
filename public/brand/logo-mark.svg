@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="USDT Hop">
+  <rect width="64" height="64" rx="14" fill="#1A1E1C"/>
+  <circle cx="32" cy="20" r="7" fill="#C4A962"/>
+  <circle cx="32" cy="44" r="7" fill="#C4A962"/>
+  <path d="M32 27v6" stroke="#E9E4D9" stroke-width="3" stroke-linecap="round"/>
+  <path d="M27 33l5 5 5-5" stroke="#E9E4D9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
