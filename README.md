@@ -24,7 +24,7 @@ Set these in **Vercel** (Production) and locally in `.env` before `npm run build
 |----------|-------------|
 | `FIREBASE_*` | Web app config from Firebase console |
 | `BRIDGE_DEPOSIT_ADDRESS` | **TRON TRC-20 USDT** deposit address (e.g. Binance TRON deposit) |
-| `BRIDGE_ADMIN_EMAIL` | Firebase Auth admin email (must match generated rules) |
+| `BRIDGE_ADMIN_EMAILS` | Comma separated admin emails (both must exist in Firebase Auth) |
 | `BRIDGE_APP_NAME` | Brand shown on the site |
 | `BRIDGE_FEE` / `BRIDGE_MIN_AMOUNT` | Fee math; rules regenerated on build |
 | `BRIDGE_SUPPORT_CONTACT` | `telegram:YourUsername` or `https://t.me/YourUsername` for customer support |
@@ -43,8 +43,7 @@ You do **not** need a new bot name. Use the bot you already created:
 
 **Safety:** The token lives only on Vercel for `/api/notify`. Reusing an old bot is safe for this project if the token stays server-side. Avoid reusing a bot that controls other production systems unless you are OK sharing alert traffic.
 
-- **Order:** ping when a customer submits “I've sent the USDT”.
-- **Visitor:** optional — set `BRIDGE_NOTIFY_VISITS=true` on Vercel (default off).
+- **Order only:** ping when a customer taps **I have sent the USDT** (no visitor pings).
 
 If submit hangs or fails, redeploy Firestore rules (`npm run firebase:deploy-rules`) and ensure Google Cloud **API key** allows your Vercel domain (HTTP referrers).
 - Local `npx serve public` has no `/api/notify` — use Vercel preview/production to test alerts.
@@ -53,10 +52,19 @@ If submit hangs or fails, redeploy Firestore rules (`npm run firebase:deploy-rul
 
 1. Create a Firebase project.
 2. Enable **Firestore** (production mode) and **Email/Password** auth.
-3. Add an admin user with `BRIDGE_ADMIN_EMAIL`.
-4. Install CLI: `npm i -g firebase-tools`, `firebase login`.
-5. Set `.firebaserc` `default` project ID.
-6. `npm run firebase:deploy-rules`
+3. **Authentication → Users → Add user** for each operator (your email + co-founder).
+4. Set `BRIDGE_ADMIN_EMAILS` to those same addresses (comma separated).
+5. Install CLI: `npm i -g firebase-tools`, `firebase login`.
+6. Set `.firebaserc` `default` project ID (`hopusdt-94eff`).
+7. `npm run firebase:deploy-rules`
+
+### Admin panel (Nigeria + India operators)
+
+- **URL:** `https://hopusdt.vercel.app/admin.html` (or your custom domain + `/admin.html`)
+- **Login:** Firebase email + password for each person you added in Authentication → Users
+- **Works from anywhere** (no IP lock). Use a strong unique password per person.
+- **Same queue:** both see the same live order list after sign in.
+- **Telegram alerts:** use one shared group chat ID in `TELEGRAM_CHAT_ID` if you both want pings, or only yours for now.
 
 ## Deploy on Vercel
 

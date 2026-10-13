@@ -75,8 +75,3 @@ export async function notifyDesk(payload) {
   }
 }
 
-export function notifyVisitOnce() {
-  if (sessionStorage.getItem("deskVisitNotified")) return;
-  sessionStorage.setItem("deskVisitNotified", "1");
-  notifyDesk({ type: "visit" });
-}

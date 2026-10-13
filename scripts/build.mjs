@@ -28,7 +28,11 @@ function req(name) {
 
 const FEE = Number(process.env.BRIDGE_FEE ?? "1");
 const MIN_AMOUNT = Number(process.env.BRIDGE_MIN_AMOUNT ?? "2");
-const ADMIN_EMAIL = process.env.BRIDGE_ADMIN_EMAIL?.trim() ?? "YOUR_ADMIN_EMAIL@example.com";
+const ADMIN_EMAILS = (process.env.BRIDGE_ADMIN_EMAILS || process.env.BRIDGE_ADMIN_EMAIL || "YOUR_ADMIN_EMAIL@example.com")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
+if (!ADMIN_EMAILS.length) throw new Error("Set BRIDGE_ADMIN_EMAILS (comma separated) or BRIDGE_ADMIN_EMAIL");
 
 if (!Number.isFinite(FEE) || FEE <= 0) throw new Error("BRIDGE_FEE must be a positive number");
 if (!Number.isFinite(MIN_AMOUNT) || MIN_AMOUNT <= FEE) {
@@ -56,8 +60,6 @@ export const APP_TAGLINE = ${JSON.stringify(
   process.env.BRIDGE_TAGLINE?.trim() || "Send USDT on TRON, receive USDT on BNB Smart Chain."
 )};
 export const SUPPORT_CONTACT = ${JSON.stringify(process.env.BRIDGE_SUPPORT_CONTACT?.trim() || "")};
-export const NOTIFY_VISITS = ${JSON.stringify(process.env.BRIDGE_NOTIFY_VISITS === "true")};
-
 export const FEE = ${FEE};
 export const MIN_AMOUNT = ${MIN_AMOUNT};
 export const DEPOSIT_ADDRESS = ${JSON.stringify(
@@ -69,7 +71,8 @@ const firestoreRules = `rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
-      return request.auth != null && request.auth.token.email == ${JSON.stringify(ADMIN_EMAIL)};
+      return request.auth != null
+        && request.auth.token.email.lower() in ${JSON.stringify(ADMIN_EMAILS)};
     }
     match /bridges/{id} {
       allow create: if request.resource.data.keys().hasOnly(['send','receive','bscAddress','status','createdAt'])

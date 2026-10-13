@@ -144,13 +144,12 @@
 <script type="module">
 import {
   db, FEE, MIN_AMOUNT, DEPOSIT_ADDRESS,
-  APP_NAME, APP_TAGLINE, SUPPORT_CONTACT, NOTIFY_VISITS
+  APP_NAME, APP_TAGLINE, SUPPORT_CONTACT
 } from "./firebase-config.js";
-import { initSupport, notifyVisitOnce, notifyDesk, telegramSupportUrl } from "./support.js";
+import { initSupport, notifyDesk, telegramSupportUrl } from "./support.js";
 import { collection, addDoc, doc, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 initSupport({ supportContact: SUPPORT_CONTACT, appName: APP_NAME });
-if (NOTIFY_VISITS) notifyVisitOnce();
 
 const $ = id => document.getElementById(id);
 document.title = APP_NAME;
@@ -160,7 +159,14 @@ if (nameParts.length > 1) {
 } else {
   $("logoText").textContent = APP_NAME;
 }
-$("tagline").textContent = APP_TAGLINE;
+function cleanTagline(text) {
+  return text
+    .replace(/\s*[—–]\s*/g, ", ")
+    .replace(/\s+-\s+/g, ", ")
+    .replace(/,\s*,/g, ",")
+    .trim();
+}
+$("tagline").textContent = cleanTagline(APP_TAGLINE);
 $("footerBrand").textContent = APP_NAME;
 $("feeChip").textContent = FEE.toFixed(2) + " USDT";
 const amt = $("amt"), bsc = $("bsc"), cont = $("cont");

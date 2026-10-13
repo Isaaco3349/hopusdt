@@ -27,18 +27,16 @@ export default async function handler(req, res) {
   const { type } = body;
   let text = "";
 
-  if (type === "visit") {
-    text = `🌐 Visitor on ${appName}\n${new Date().toISOString()}`;
-  } else if (type === "order") {
+  if (type === "order") {
     const { id, send, receive, bscAddress } = body;
     if (!id || send == null) return res.status(400).json({ error: "Missing order fields" });
     text = [
-      `🆕 New bridge request — ${appName}`,
+      `New order: ${appName}`,
       `ID: ${id}`,
-      `Send: ${send} USDT (TRC-20)`,
-      receive != null ? `Receive: ${receive} USDT (BEP-20)` : null,
+      `Send: ${send} USDT (TRC20)`,
+      receive != null ? `Receive: ${receive} USDT (BEP20)` : null,
       bscAddress ? `BSC: ${bscAddress}` : null,
-      "→ Check admin panel / Binance deposits",
+      "Check admin panel and match deposit.",
     ]
       .filter(Boolean)
       .join("\n");
