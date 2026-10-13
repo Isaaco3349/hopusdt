@@ -1,32 +1,48 @@
-/** Floating support panel (WhatsApp handoff for manual desk). */
+/** Support handoff (Telegram) + desk notifications. */
 
-function whatsappUrl(contact, message) {
+export function telegramSupportUrl(contact, message) {
+  if (!contact?.trim()) return null;
   const c = contact.trim();
-  let phone = "";
-  if (c.startsWith("whatsapp:")) phone = c.replace(/^whatsapp:/i, "").replace(/\D/g, "");
-  else if (/^\+?\d{10,15}$/.test(c.replace(/\s/g, ""))) phone = c.replace(/\D/g, "");
-  if (!phone) return null;
+  let base = "";
+  if (c.startsWith("telegram:")) {
+    const handle = c.replace(/^telegram:/i, "").replace(/^@/, "");
+    base = `https://t.me/${encodeURIComponent(handle)}`;
+  } else if (c.startsWith("https://t.me/")) {
+    base = c.split("?")[0];
+  } else if (c.startsWith("@")) {
+    base = `https://t.me/${encodeURIComponent(c.slice(1))}`;
+  } else if (/^t\.me\//i.test(c)) {
+    base = `https://${c.replace(/^https?:\/\//i, "").split("?")[0]}`;
+  } else {
+    return null;
+  }
   const q = message ? `?text=${encodeURIComponent(message)}` : "";
-  return `https://wa.me/${phone}${q}`;
+  return base + q;
 }
 
 export function initSupport({ supportContact, appName }) {
-  const root = document.getElementById("supportRoot");
   const toggle = document.getElementById("supportToggle");
   const panel = document.getElementById("supportPanel");
   const textarea = document.getElementById("supportMsg");
   const sendBtn = document.getElementById("supportSend");
   const closeBtn = document.getElementById("supportClose");
-  if (!root || !toggle || !panel) return;
+  const navSupport = document.getElementById("navSupport");
+  if (!toggle || !panel) return;
 
   const defaultMsg = `Hi ${appName} support. I need help with my bridge request.`;
-  textarea.value = defaultMsg;
+  if (textarea) textarea.value = defaultMsg;
 
-  const wa = supportContact ? whatsappUrl(supportContact, defaultMsg) : null;
-  if (!wa) {
-    sendBtn.disabled = true;
-    sendBtn.textContent = "Support not configured";
-    return;
+  const openTelegram = () => {
+    const msg = textarea?.value.trim() || defaultMsg;
+    const url = telegramSupportUrl(supportContact, msg);
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  if (!telegramSupportUrl(supportContact, "")) {
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Support not configured";
+    }
   }
 
   function setOpen(open) {
@@ -35,13 +51,12 @@ export function initSupport({ supportContact, appName }) {
   }
 
   toggle.onclick = () => setOpen(panel.classList.contains("hidden"));
-  closeBtn.onclick = () => setOpen(false);
-
-  sendBtn.onclick = () => {
-    const msg = textarea.value.trim() || defaultMsg;
-    const url = whatsappUrl(supportContact, msg);
-    if (url) window.open(url, "_blank", "noopener,noreferrer");
-  };
+  closeBtn?.addEventListener("click", () => setOpen(false));
+  sendBtn?.addEventListener("click", openTelegram);
+  navSupport?.addEventListener("click", (e) => {
+    e.preventDefault();
+    setOpen(true);
+  });
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") setOpen(false);

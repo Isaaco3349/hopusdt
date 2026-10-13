@@ -27,7 +27,7 @@ Set these in **Vercel** (Production) and locally in `.env` before `npm run build
 | `BRIDGE_ADMIN_EMAIL` | Firebase Auth admin email (must match generated rules) |
 | `BRIDGE_APP_NAME` | Brand shown on the site |
 | `BRIDGE_FEE` / `BRIDGE_MIN_AMOUNT` | Fee math; rules regenerated on build |
-| `BRIDGE_SUPPORT_CONTACT` | `whatsapp:+234…` — powers the bottom-right **Help** chat panel |
+| `BRIDGE_SUPPORT_CONTACT` | `telegram:YourUsername` or `https://t.me/YourUsername` for customer support |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | **Vercel only** — visitor + new-order push alerts |
 
 **Important:** Inbound deposits are **TRON (`T…`)**, not Ethereum/Monad `0x…` addresses. Using a **Binance TRON deposit** for operations is fine; the UI does not mention Binance.

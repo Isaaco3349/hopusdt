@@ -7,10 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-  body{padding:0;display:block;background:var(--ash-bg);color:var(--cream-on-ash)}
+  body{padding:0;display:block;background:var(--bg);color:var(--ink)}
   main.wide{margin:0 auto;padding:28px 18px 88px}
-  main.wide h1{color:var(--cream-bright)}
-  main.wide .sub{color:var(--cream-on-ash)}
   .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
   .live{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--ok);font-weight:600}
   .live i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
@@ -20,10 +18,10 @@
   .stat b{display:block;font-size:1.5rem;font-variant-numeric:tabular-nums}
   .stat span{font-size:.8rem;color:var(--muted)}
   .stat.hot{border-color:var(--bsc);background:var(--bsc-soft)}
-  .bar{position:sticky;top:0;background:var(--ash-bg);padding:8px 0 12px;z-index:5;border-bottom:1px solid rgba(237,227,209,.2)}
+  .bar{position:sticky;top:0;background:var(--bg);padding:8px 0 12px;z-index:5;border-bottom:1px solid var(--line)}
   .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px}
   .tabs button{flex:none;padding:9px 14px;font-size:.9rem;background:var(--surface);color:var(--ink);border:1px solid var(--line)}
-  .tabs button[aria-pressed="true"]{background:var(--ash-800);color:var(--cream-50);border-color:var(--ash-800)}
+  .tabs button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
   .badge{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:10px;font-size:.75rem;background:var(--paper);color:var(--ink)}
   .tabs button[aria-pressed="true"] .badge{background:rgba(255,255,255,.2);color:#fff}
   .badge.alert{background:var(--bsc);color:var(--ink)}
@@ -56,10 +54,10 @@
   .sheet h2{font-size:1.15rem;margin-bottom:8px}
   .sheet p{font-size:.9rem;color:var(--muted);line-height:1.55;margin-bottom:16px}
   .sheet .actions .cancel{background:transparent;color:var(--ink);border:1px solid var(--line)}
-  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ash-800);color:var(--cream-50);border-radius:12px;
-    padding:12px 14px;display:flex;gap:14px;align-items:center;font-size:.9rem;z-index:30;width:calc(100% - 32px);max-width:440px;box-shadow:var(--shadow-lg)}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;border-radius:12px;
+    padding:12px 14px;display:flex;gap:14px;align-items:center;font-size:.9rem;z-index:30;width:calc(100% - 32px);max-width:440px;box-shadow:var(--shadow)}
   .toast span{flex:1}
-  .toast button{padding:6px 12px;font-size:.85rem;background:var(--cream-50);color:var(--ink)}
+  .toast button{padding:6px 12px;font-size:.85rem;background:#fff;color:var(--ink)}
   #login{max-width:360px;margin:40px auto 0}
   @media(max-width:520px){.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:span 2}.money{grid-template-columns:1fr 1fr}}
 </style>

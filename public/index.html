@@ -3,23 +3,40 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>USDT Hop</title>
+<meta name="description" content="Convert USDT from TRON TRC20 to BNB Smart Chain BEP20 with a clear flat fee and live order status.">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="shell">
-  <header class="brand">
-    <h1 id="appName">USDT Hop</h1>
-    <p class="sub" id="tagline"></p>
-    <p class="sub note" id="operatorNote"></p>
-    <div class="pill-list" aria-hidden="false">
-      <div class="pill"><b>TRC20 in</b>Send USDT on TRON</div>
-      <div class="pill"><b>BEP20 out</b>Receive on BNB Smart Chain</div>
-      <div class="pill"><b>Flat fee</b><span id="feePill">see form</span></div>
-    </div>
-  </header>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="/" id="logoText">USDT <span>Hop</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#" id="navSupport" class="nav-cta">Support</a>
+    </nav>
+  </div>
+</header>
 
-  <div class="panel">
+<section class="hero">
+  <div class="hero-copy marketing">
+    <h1 id="heroTitle">Move USDT from TRON to BSC</h1>
+    <p class="lead" id="tagline">Send USDT on TRON, receive USDT on BNB Smart Chain. Transparent flat fee.</p>
+    <div class="trust-row">
+      <span class="trust-chip">Live status tracking</span>
+      <span class="trust-chip">Flat fee <span id="feeChip">$1</span></span>
+      <span class="trust-chip">Manual verification</span>
+    </div>
+    <ol class="steps-inline">
+      <li><strong>1</strong> Enter amount and your BSC wallet</li>
+      <li><strong>2</strong> Send TRC20 USDT to the deposit address</li>
+      <li><strong>3</strong> Receive BEP20 USDT after confirmation</li>
+    </ol>
+  </div>
+
+  <div class="bridge-card" id="bridgeApp">
+    <h2>Start your transfer</h2>
     <section id="step1" class="hidden">
       <div class="side from">
         <div class="row"><span>You send</span><span class="net">TRC20 on TRON</span></div>
@@ -30,45 +47,95 @@
         <div class="row"><span>You receive</span><span class="net">BEP20 on BSC</span></div>
         <div class="amount"><output id="recv">0.00</output><span>USDT</span></div>
       </div>
-      <div class="fee"><span>Bridge fee</span><b id="feeTxt"></b></div>
-      <label for="bsc">Your BEP20 receiving address</label>
+      <div class="fee"><span>Service fee</span><b id="feeTxt"></b></div>
+      <label for="bsc">BSC wallet address (BEP20)</label>
       <input id="bsc" class="field" placeholder="0x…" autocomplete="off" spellcheck="false">
       <div class="err" id="err"></div>
-      <button class="full" id="cont" disabled>Continue to deposit</button>
+      <button class="full" id="cont" disabled>Continue</button>
     </section>
 
     <section id="step2" class="hidden">
-      <div class="card">
+      <div class="card-inner">
         <div id="depositBox">
           <p>Send exactly <strong id="sendAmt"></strong> USDT on <strong>TRON (TRC20)</strong> to:</p>
           <div class="depaddr" id="depAddr"></div>
           <button class="ghost full" id="copy">Copy address</button>
-          <p class="warn">Send only TRC20 USDT. Other tokens or networks will be lost.</p>
-          <p class="trust">Independent conversion desk. Not affiliated with Binance, TRON, or BSC. You send to our TRON USDT address; we send BEP20 USDT to your wallet after confirmation.</p>
+          <p class="warn">Send only TRC20 USDT. Wrong network or token may be lost.</p>
+          <p class="trust">Independent service. Not affiliated with Binance, TRON, or BSC.</p>
         </div>
         <div class="summary">
           <div><span>You receive</span><span id="sumRecv"></span></div>
-          <div><span>To (BSC)</span><span id="sumAddr"></span></div>
-          <div><span>Request ID</span><span id="sumId">—</span></div>
+          <div><span>To wallet</span><span id="sumAddr"></span></div>
+          <div><span>Order ID</span><span id="sumId">Pending</span></div>
         </div>
-        <button class="full" id="sent">I've sent the USDT</button>
+        <button class="full" id="sent">I have sent the USDT</button>
         <p class="submit-err hidden" id="submitErr"></p>
         <div class="status hidden" id="status"><div class="dot"></div><div><b id="stTitle"></b><small id="stText"></small></div></div>
-        <p id="saveNote" class="hidden" style="margin-top:12px;font-size:.8rem">Bookmark this page to check your status later.</p>
+        <p id="saveNote" class="hidden trust" style="margin-top:12px">Save this page to check status later.</p>
       </div>
-      <button class="ghost full" id="back" style="margin-top:12px">Start a new bridge</button>
+      <button class="ghost full" id="back" style="margin-top:12px">New transfer</button>
     </section>
   </div>
-</div>
+</section>
+
+<section class="section marketing" id="how">
+  <h2>How it works</h2>
+  <div class="grid-3">
+    <article class="info-card">
+      <h3>Quote</h3>
+      <p>Enter how much USDT you send on TRON and your BEP20 address. You see the fee and receive amount before depositing.</p>
+    </article>
+    <article class="info-card">
+      <h3>Deposit</h3>
+      <p>Send the exact TRC20 amount to the address shown. Submit the order so we can match your transfer.</p>
+    </article>
+    <article class="info-card">
+      <h3>Payout</h3>
+      <p>After your deposit is verified, BEP20 USDT is sent to your wallet. Track progress on this page.</p>
+    </article>
+  </div>
+</section>
+
+<section class="section alt marketing" id="faq">
+  <h2>FAQ</h2>
+  <div class="faq">
+    <details>
+      <summary>How long does it take?</summary>
+      <p>Most orders complete within minutes after your TRC20 deposit is confirmed. Timing depends on network and queue.</p>
+    </details>
+    <details>
+      <summary>What fee do you charge?</summary>
+      <p>A flat service fee is shown before you deposit. Minimum transfer amounts apply.</p>
+    </details>
+    <details>
+      <summary>Is this an official Binance or wallet service?</summary>
+      <p>No. This is an independent conversion desk. Always verify the deposit address on this site before sending.</p>
+    </details>
+    <details>
+      <summary>What if my deposit is not found?</summary>
+      <p>Contact support on Telegram with your order ID, amount, and transaction reference.</p>
+    </details>
+  </div>
+</section>
+
+<footer class="site-footer marketing">
+  <div class="footer-inner">
+    <p id="footerDisclaimer">USDT Hop helps you move USDT from TRON to BNB Smart Chain. Cryptocurrency transfers are irreversible. Use at your own risk.</p>
+    <div class="footer-meta">
+      <span id="footerBrand">USDT Hop</span>
+      <a href="#" id="footerSupport">Telegram support</a>
+    </div>
+  </div>
+</footer>
 
 <div id="supportRoot" class="support-root">
   <button type="button" id="supportToggle" class="support-fab" aria-expanded="false" aria-controls="supportPanel">Help</button>
   <div id="supportPanel" class="support-panel hidden" role="dialog" aria-labelledby="supportTitle">
-    <h2 id="supportTitle">Message support</h2>
-    <p>We reply manually on WhatsApp. Include your request ID if you already submitted a bridge.</p>
+    <h2 id="supportTitle">Support</h2>
+    <p id="supportBlurb">Message us on Telegram. Include your order ID if you already started a transfer.</p>
     <textarea id="supportMsg" class="field" aria-label="Your message"></textarea>
     <div class="row">
-      <button type="button" id="supportSend">Open WhatsApp</button>
+      <button type="button" id="supportSend">Open Telegram</button>
       <button type="button" id="supportClose" class="ghost">Close</button>
     </div>
   </div>
@@ -77,9 +144,9 @@
 <script type="module">
 import {
   db, FEE, MIN_AMOUNT, DEPOSIT_ADDRESS,
-  APP_NAME, APP_TAGLINE, OPERATOR_NOTE, SUPPORT_CONTACT, NOTIFY_VISITS
+  APP_NAME, APP_TAGLINE, SUPPORT_CONTACT, NOTIFY_VISITS
 } from "./firebase-config.js";
-import { initSupport, notifyVisitOnce, notifyDesk } from "./support.js";
+import { initSupport, notifyVisitOnce, notifyDesk, telegramSupportUrl } from "./support.js";
 import { collection, addDoc, doc, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 initSupport({ supportContact: SUPPORT_CONTACT, appName: APP_NAME });
@@ -87,33 +154,42 @@ if (NOTIFY_VISITS) notifyVisitOnce();
 
 const $ = id => document.getElementById(id);
 document.title = APP_NAME;
-$("appName").textContent = APP_NAME;
+const nameParts = APP_NAME.trim().split(/\s+/);
+if (nameParts.length > 1) {
+  $("logoText").innerHTML = `${nameParts[0]} <span>${nameParts.slice(1).join(" ")}</span>`;
+} else {
+  $("logoText").textContent = APP_NAME;
+}
 $("tagline").textContent = APP_TAGLINE;
-if (OPERATOR_NOTE) $("operatorNote").textContent = OPERATOR_NOTE;
+$("footerBrand").textContent = APP_NAME;
+$("feeChip").textContent = FEE.toFixed(2) + " USDT";
 const amt = $("amt"), bsc = $("bsc"), cont = $("cont");
 $("feeTxt").textContent = FEE.toFixed(2) + " USDT";
-$("feePill").textContent = FEE.toFixed(2) + " USDT per bridge";
 $("depAddr").textContent = DEPOSIT_ADDRESS;
-const isBsc = a => /^0x[a-fA-F0-9]{40}$/.test(a.trim());
+
+$("footerSupport").onclick = (e) => { e.preventDefault(); $("navSupport").click(); };
 
 function supportLine() {
-  if (!SUPPORT_CONTACT) return "";
-  const c = SUPPORT_CONTACT.trim();
-  if (c.startsWith("http")) return `<br><a href="${encodeURI(c)}" target="_blank" rel="noopener">Contact support</a>`;
-  if (c.startsWith("whatsapp:")) return `<br><a href="https://wa.me/${c.replace(/^whatsapp:/i, "").replace(/\D/g, "")}" target="_blank" rel="noopener">Contact support on WhatsApp</a>`;
-  return `<br>Support: ${c}`;
+  const url = telegramSupportUrl(SUPPORT_CONTACT, "Support request");
+  if (!url) return "";
+  return `<br><a href="${url}" target="_blank" rel="noopener">Contact Telegram support</a>`;
+}
+
+const isBsc = a => /^0x[a-fA-F0-9]{40}$/.test(a.trim());
+
+function setFlowActive(on) {
+  document.body.classList.toggle("flow-active", on);
 }
 
 function resetSubmitUi() {
   $("sent").disabled = false;
-  $("sent").textContent = "I've sent the USDT";
+  $("sent").textContent = "I have sent the USDT";
   $("sent").classList.remove("hidden");
 }
 
 function showSubmitError(msg) {
-  const el = $("submitErr");
-  el.textContent = msg;
-  el.classList.remove("hidden");
+  $("submitErr").textContent = msg;
+  $("submitErr").classList.remove("hidden");
 }
 
 function clearSubmitError() {
@@ -130,9 +206,9 @@ function withTimeout(promise, ms) {
 
 function firestoreHelp(code) {
   if (code === "permission-denied") {
-    return "Server rejected this request (Firestore rules). Redeploy rules: npm run firebase:deploy-rules after setting BRIDGE_ADMIN_EMAIL and BRIDGE_FEE.";
+    return "Server rejected this request. Contact support if this continues.";
   }
-  if (code === "unavailable") return "Firestore is unreachable. Check Firebase console that the database is created.";
+  if (code === "unavailable") return "Service temporarily unavailable. Try again shortly.";
   return "";
 }
 
@@ -141,7 +217,7 @@ function update(){
   $("recv").textContent = (v > FEE ? v - FEE : 0).toFixed(2);
   let msg = "";
   if (amt.value && !(v >= MIN_AMOUNT)) msg = `Minimum is ${MIN_AMOUNT} USDT.`;
-  else if (bsc.value && !isBsc(bsc.value)) msg = "Enter a valid BSC address (0x followed by 40 characters).";
+  else if (bsc.value && !isBsc(bsc.value)) msg = "Enter a valid BSC address (0x plus 40 characters).";
   $("err").textContent = msg;
   cont.disabled = !(v >= MIN_AMOUNT && isBsc(bsc.value));
 }
@@ -155,12 +231,13 @@ cont.onclick = () => {
   $("sumRecv").textContent = draft.receive.toFixed(2) + " USDT";
   $("sumAddr").textContent = draft.bscAddress;
   clearSubmitError();
+  setFlowActive(true);
   show(2);
 };
 
 $("copy").onclick = async () => {
   try { await navigator.clipboard.writeText(DEPOSIT_ADDRESS); $("copy").textContent = "Copied"; }
-  catch { $("copy").textContent = "Copy failed. Select manually."; }
+  catch { $("copy").textContent = "Copy failed"; }
 };
 
 $("sent").onclick = async () => {
@@ -181,20 +258,18 @@ $("sent").onclick = async () => {
     watch(ref.id);
   } catch (e) {
     resetSubmitUi();
-    const code = e?.code || "";
-    const extra = firestoreHelp(code);
     const msg = e?.message === "timeout"
-      ? "Request timed out. Check your connection, Firebase setup, and API key restrictions for this domain."
-      : (extra || "Could not save your request. Try again or contact support.");
+      ? "Request timed out. Check your connection and try again."
+      : (firestoreHelp(e?.code) || "Could not save your request. Try again or contact support.");
     showSubmitError(msg);
   }
 };
 
 const STATUS = {
-  verifying:  ["Checking your deposit", "We are confirming your TRC20 USDT arrived. This page updates on its own."],
-  processing: ["Deposit confirmed", "Your BEP20 USDT is on the way. Please wait."],
-  completed:  ["Sent", "Your BEP20 USDT has been sent to your address."],
-  rejected:   ["Deposit not found", "We could not match your deposit. Contact us with your request ID." + supportLine()]
+  verifying:  ["Checking deposit", "We are confirming your TRC20 USDT. This page updates automatically."],
+  processing: ["Deposit confirmed", "Your BEP20 USDT payout is being sent."],
+  completed:  ["Complete", "BEP20 USDT was sent to your wallet."],
+  rejected:   ["Deposit not found", "We could not match your deposit. Contact support with your order ID." + supportLine()]
 };
 
 function watch(id){
@@ -202,12 +277,12 @@ function watch(id){
   $("sent").classList.add("hidden");
   $("saveNote").classList.remove("hidden");
   $("status").classList.remove("hidden");
+  setFlowActive(true);
   onSnapshot(
     doc(db, "bridges", id),
     snap => {
       if (!snap.exists()) {
-        $("stTitle").textContent = "Request not found";
-        $("status").classList.remove("hidden");
+        $("stTitle").textContent = "Order not found";
         return;
       }
       const d = snap.data();

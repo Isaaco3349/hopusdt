@@ -55,9 +55,6 @@ export const APP_NAME = ${JSON.stringify(process.env.BRIDGE_APP_NAME?.trim() || 
 export const APP_TAGLINE = ${JSON.stringify(
   process.env.BRIDGE_TAGLINE?.trim() || "Send USDT on TRON, receive USDT on BNB Smart Chain."
 )};
-export const OPERATOR_NOTE = ${JSON.stringify(
-  process.env.BRIDGE_OPERATOR_NOTE?.trim() || "Operated by a verified desk partner."
-)};
 export const SUPPORT_CONTACT = ${JSON.stringify(process.env.BRIDGE_SUPPORT_CONTACT?.trim() || "")};
 export const NOTIFY_VISITS = ${JSON.stringify(process.env.BRIDGE_NOTIFY_VISITS === "true")};
 
